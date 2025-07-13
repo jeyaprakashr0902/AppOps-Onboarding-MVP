@@ -2,54 +2,29 @@ import os
 import requests
 from alert_condition import *
 
-
-
-def get_api_key():
-    """
-    Retrieve the API key from an environment variable.
-
-    Returns:
-        str: The API key.
-    """
-    api_key = os.getenv("NEW_RELIC_API_KEY")
-    if not api_key:
-        raise ValueError("API key not found. Please set the NEW_RELIC_API_KEY environment variable.")
-    return api_key
+from keys import get_keys
 
 
 
-def update_classic_alert(api_key,new_runbook_url):
-    """
-    Update the runbook URL for all alert conditions in a given policy.
 
-    Args:
-        api_key (str): New Relic API key.
-        policy_id (str): ID of the alert policy.
-        new_runbook_url (str): New runbook URL to set.
+def update_classic_alert(api_key,condition,new_runbook_url):
+    
+    
 
-    Returns:
-        None
-    """
-    alert_conditions = list_all_alert_conditions(api_key)
+                    headers = {
+                        "Api-Key": api_key,
+                        "Content-Type": "application/json"
+                    }
 
-    headers = {
-        "Api-Key": api_key,
-        "Content-Type": "application/json"
-    }
+                    endpoints = {
+                        "APM": "https://api.newrelic.com/v2/alerts_conditions/{condition_id}.json",
+                        "NRQL": "https://api.newrelic.com/v2/alerts_nrql_conditions/{condition_id}.json",
+                        "Synthetics": "https://api.newrelic.com/v2/alerts_synthetics_conditions/{condition_id}.json",
+                        "MultiLocationSynthetics": "https://api.newrelic.com/v2/alerts_location_failure_conditions/{condition_id}.json",
+                        "Infrastructure": "https://infra-api.newrelic.com/v2/alerts/conditions/{condition_id}"
+                    }
 
-    endpoints = {
-        "APM": "https://api.newrelic.com/v2/alerts_conditions/{condition_id}.json",
-        "NRQL": "https://api.newrelic.com/v2/alerts_nrql_conditions/{condition_id}.json",
-        "Synthetics": "https://api.newrelic.com/v2/alerts_synthetics_conditions/{condition_id}.json",
-        "MultiLocationSynthetics": "https://api.newrelic.com/v2/alerts_location_failure_conditions/{condition_id}.json",
-        "Infrastructure": "https://infra-api.newrelic.com/v2/alerts/conditions/{condition_id}"
-    }
-
-    for account in alert_conditions.keys():
-        # Iterate directly over the conditions
-        for policy in alert_conditions[account].keys():
-
-                for condition in alert_conditions[account][policy]:
+    
                     condition_id = condition.get("id")
                     alert_type=condition.get('condition_type')
                     endpoint = endpoints[alert_type].format(condition_id=condition_id)
@@ -182,11 +157,34 @@ def update_nrql_alert_nerdgraph(api_key, condition_id, condition_type, nrql_acco
     else:
         print(f"Failed to update NRQL condition: {response.status_code} - {response.text}")
 
-# Example usage:
-# api_key = "your_api_key"
+
 if __name__ == "__main__":
-    user_key = get_api_key()
+    
+    sub_account_keys=get_keys()
+
+    key=sub_account_keys['2330551']['key']
+    
+    alert_conditions = list_all_alert_conditions(key,sub_account_keys)
+
+    with open("input.json", "r", encoding="utf-8") as f:
+         input_json= json.load(f)
+
+    print(input_json)
+
+    for data in input_json:
+         
+
+         condition_list=alert_conditions[int(data['account_ID'])]['policy_name']
+
+         for condition in condition_list:
+              
+              if condition['id']==data['condition_ID']:
+                   
+                   if data.get('runbook_url') is None:
+                        continue
+                   
+                   new_runbook_url=data['runbook_url']
+                   account_key=sub_account_keys[str(data['account_ID'])]['key']
+                   update_classic_alert(account_key,condition,new_runbook_url)
     
    
-    new_runbook_url = "https://www.facebook.com"
-    update_classic_alert(user_key,new_runbook_url)

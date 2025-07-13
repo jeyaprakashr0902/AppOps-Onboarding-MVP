@@ -2,21 +2,8 @@ import os
 import json
 import requests
 import time
+from keys import get_keys
 
-
-
-def get_api_key():
-    """
-    Retrieve the API key from an environment variable.
-    Returns:
-        str: The API key.
-    """
-    api_key = os.environ.get("MEP_NEW_RELIC_API_KEY")
-    if not api_key:
-        raise ValueError("API key not found. Please set the NEW_RELIC_API_KEY environment variable.")
-    return api_key
-
-sandbox_key="NRAK-YJZYPI2LDDKRX9U5EYO9MA2WRFQ"
 
 def get_accounts(key):
     
@@ -196,12 +183,14 @@ def get_alert_condition_guid(condition_name,account_id,key,session):
 
 
 if __name__ == "__main__":
-    user_key = get_api_key()
+   
 
-    
+    sub_account_keys=get_keys()
 
-    accounts=get_accounts(user_key)
-    policies=nerdgraph_list_policies(accounts,user_key)
+    key=sub_account_keys['2330551']['key']
+
+    accounts=get_accounts(key)
+    policies=nerdgraph_list_policies(accounts,key)
 
     
 

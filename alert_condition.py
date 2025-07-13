@@ -6,20 +6,6 @@ import time
 from list_all_alerts import *
 from keys import get_keys
 
-sandbox_key="NRAK-YJZYPI2LDDKRX9U5EYO9MA2WRFQ"
-
-def get_api_key():
-    """
-    Retrieve the API key from an environment variable.
-    Returns:
-        str: The API key.
-    """
-    api_key = os.environ.get("MEP_NEW_RELIC_API_KEY")
-    if not api_key:
-        raise ValueError("API key not found. Please set the NEW_RELIC_API_KEY environment variable.")
-    return api_key
-
-
 
 def fetch_conditions(endpoint, headers):
     response = requests.get(endpoint, headers=headers)
@@ -85,12 +71,7 @@ def list_all_alert_conditions(key,sub_account_keys):
 
     for account in accounts:
         
-        # if account['id']!=2330551:
-        #      continue
-
-        count=1
-        print("Account : ",count)
-        count+=1
+        
         
         session=requests.Session()
          
@@ -153,11 +134,13 @@ def list_all_alert_conditions(key,sub_account_keys):
 
 if __name__ == "__main__":
         
-        user_key=get_api_key()
+      
 
         sub_account_keys=get_keys()
 
-        alerts=list_all_alert_conditions(sandbox_key,sub_account_keys)
+        key=sub_account_keys['2330551']['key']
+
+        alerts=list_all_alert_conditions(key,sub_account_keys)
 
         
         for account in alerts.keys():

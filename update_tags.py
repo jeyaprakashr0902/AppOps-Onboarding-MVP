@@ -3,36 +3,23 @@ import json
 import requests
 import time
 
-from list_all_alerts import *
 
+from alert_condition import *
+from keys import get_keys
 
-
-def get_api_key():
-    """
-    Retrieve the API key from an environment variable.
-    Returns:
-        str: The API key.
-    """
-    api_key = os.environ.get("MEP_NEW_RELIC_API_KEY")
-    if not api_key:
-        raise ValueError("API key not found. Please set the NEW_RELIC_API_KEY environment variable.")
-    return api_key
-
-
-
-def update_tags(key):
+def update_tags(key,guid,tag_key,tag_value):
 
    query=""" mutation {
         taggingAddTagsToEntity(
-                    guid: "Njc2MTA5N3xBSU9QU3xDT05ESVRJT058NTI0MDkyMTA",
-                    tags: [{ key: "owner", values: ["JP"] }]
+                    guid: "%s",
+                    tags: [{ key: %s, values: [%s] }]
                 ) 
                 
                 {
                     errors { message type }
                 }
     }
-    """
+    """(guid,tag_key,tag_value)
    endpoint = "https://api.newrelic.com/graphql"
    headers = {'API-Key': f'{key}'}
    response = requests.post(endpoint, headers=headers, json={"query": query})
@@ -40,13 +27,36 @@ def update_tags(key):
 
 
 
+if __name__ == "__main__":
+    
+    sub_account_keys=get_keys()
 
+    key=sub_account_keys['2330551']['key']
+    
+    alert_conditions = list_all_alert_conditions(key,sub_account_keys)
 
-#accounts=get_accounts(sandbox_key)
-#alert_conditions=list_all_alert_conditions(sandbox_key)
+    with open("input.json", "r", encoding="utf-8") as f:
+         input_json= json.load(f)
 
+    print(input_json)
 
+    for data in input_json:
+         
 
+         condition_list=alert_conditions[int(data['account_ID'])]['policy_name']
 
-#update_tags(user_key)
+         for condition in condition_list:
+              
+              if condition['id']==data['condition_ID']:
+                   
+                   if data.get('tags') is None:
+                        continue
+                   
+                   for tag in data['tags']:
+                        for tag_key in tag.keys():
+                              
+                              account_key=sub_account_keys[str(data['account_ID'])]['key']
+                              guid=condition['guid']
+                              update_tags(account_key,guid,tag_key,tag[tag_key])
+                        
 

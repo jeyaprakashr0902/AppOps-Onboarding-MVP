@@ -1,0 +1,37 @@
+[
+
+
+        {
+
+            "account_ID": "<account_ID>",
+            "policy_name": "<Policy name>",
+            "condition_ID": "Condition_ID",
+            "tags":[
+                    {
+                
+                        "<key1>" : "<value>",
+                        "<key2>" : "<value>"
+                    }                 
+                    
+              ]
+            
+        },
+
+        {
+
+            "account_ID": "<account_ID>",
+            "policy_name": "<Policy name>",
+            "condition_ID": "Condition_ID",
+             "tags":[
+                    {
+                
+                        "<key1>" : "<value>",
+                        "<key2>" : "<value>"
+                    }
+
+              ]
+            
+            
+        }
+
+]
