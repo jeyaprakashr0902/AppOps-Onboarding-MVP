@@ -3,7 +3,7 @@ import requests
 from alert_condition import *
 
 from keys import get_keys
-
+from get_file import get_data
 
 
 
@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
     key=sub_account_keys['2330551']['key']
     
-    alert_conditions = list_all_alert_conditions(key,sub_account_keys)
+    alert_conditions = get_data()
 
     with open("input.json", "r", encoding="utf-8") as f:
          input_json= json.load(f)
