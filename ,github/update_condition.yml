@@ -1,0 +1,45 @@
+# .github/workflows/run-script.yml
+name: Run Python Script with A.json
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload input.json manually
+        uses: actions/upload-artifact@v4
+        with:
+          name: input-json
+          path: A.json
+
+      - name: Download A.json
+        uses: actions/download-artifact@v4
+        with:
+          name: input-json
+          path: .
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::167376044282:role/Test-OIDC_role
+          aws-region: us-west-2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install boto3 requests
+
+      - name: Run Python Script
+        run: python update_runbook_url.py

@@ -169,22 +169,24 @@ if __name__ == "__main__":
     with open("input.json", "r", encoding="utf-8") as f:
          input_json= json.load(f)
 
+    print(len(alert_conditions.keys()))
+
     print(input_json)
 
-    for data in input_json:
+    # for data in input_json:
          
 
-         condition_list=alert_conditions[int(data['account_ID'])]['policy_name']
+    #      condition_list=alert_conditions[int(data['account_ID'])]['policy_name']
 
-         for condition in condition_list:
+    #      for condition in condition_list:
               
-              if condition['id']==data['condition_ID']:
+    #           if condition['id']==data['condition_ID']:
                    
-                   if data.get('runbook_url') is None:
-                        continue
+    #                if data.get('runbook_url') is None:
+    #                     continue
                    
-                   new_runbook_url=data['runbook_url']
-                   account_key=sub_account_keys[str(data['account_ID'])]['key']
-                   update_classic_alert(account_key,condition,new_runbook_url)
+    #                new_runbook_url=data['runbook_url']
+    #                account_key=sub_account_keys[str(data['account_ID'])]['key']
+    #                update_classic_alert(account_key,condition,new_runbook_url)
     
    
