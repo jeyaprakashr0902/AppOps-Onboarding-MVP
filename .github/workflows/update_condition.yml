@@ -3,6 +3,11 @@ name: update alert conditions
 
 on:
   workflow_dispatch:
+  inputs:
+      alert_payload:
+        description: 'JSON input for alert updates'
+        required: true
+        type: string
 
 jobs:
   run-script:
@@ -15,13 +20,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::167376044282:role/Test-OIDC_role
           aws-region: us-west-2
+
+      - name: Parse JSON input
+        id: parse
+        run: |
+          echo '${{ github.event.inputs.alert_payload }}' > input.json
+          cat input.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
