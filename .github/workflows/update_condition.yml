@@ -1,5 +1,5 @@
 # .github/workflows/run-script.yml
-name: Run Python Script with A.json
+name: update alert conditions
 
 on:
   workflow_dispatch:
