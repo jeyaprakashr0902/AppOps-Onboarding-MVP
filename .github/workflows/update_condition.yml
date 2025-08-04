@@ -3,11 +3,11 @@ name: update alert conditions
 
 on:
   workflow_dispatch:
-  inputs:
-      alert_payload:
-        description: 'JSON input for alert updates'
-        required: true
-        type: string
+    inputs:
+        alert_payload:
+          description: 'JSON input for alert updates'
+          required: true
+          type: string
 
 jobs:
   run-script:
