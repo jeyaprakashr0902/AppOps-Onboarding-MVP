@@ -15,17 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Upload input.json manually
-        uses: actions/upload-artifact@v4
-        with:
-          name: input-json
-          path: A.json
-
-      - name: Download A.json
-        uses: actions/download-artifact@v4
-        with:
-          name: input-json
-          path: .
+      
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
